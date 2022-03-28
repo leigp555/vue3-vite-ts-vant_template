@@ -20,7 +20,7 @@ export default defineConfig({
         {
           libraryName: 'vant',
           esModule: true,
-          resolveStyle: name => `vant/es/${name}/style`
+          resolveStyle: name => `vant/es/${name}/style/index`
         }
       ]
     })
@@ -36,10 +36,20 @@ export default defineConfig({
       ]
     }
   },
-  server: {
-    proxy: {
-      '/v1': {
-        target: 'http://localhost:8001'
+  build: {
+    chunkSizeWarningLimit: 8000,
+    rollupOptions: {
+      output: {
+        // 分包
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id
+              .toString()
+              .split('node_modules/')[1]
+              .split('/')[0]
+              .toString()
+          }
+        }
       }
     }
   }
